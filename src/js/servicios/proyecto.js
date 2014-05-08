@@ -60,6 +60,13 @@ app.service('Proyecto', function(Menu) {
                 self.agregar_cuadro(path.join(path.dirname(archivo), data.cuadros[i].ruta));
             }
 
+            if (typeof data.dibujo !== 'undefined') {
+                var dibujo = new Image();
+                dibujo.onload = function() {
+                    $scope.dibujar_imagen_sobre_canvas(dibujo, $('#dibujo').get(0));
+                };
+                dibujo.src = data.dibujo;
+            }
             self.directorio_destino = path.dirname(archivo);
             self.nombre_del_proyecto = path.basename(archivo, ".hmotion");
             self.es_proyecto_nuevo = false;
@@ -68,6 +75,25 @@ app.service('Proyecto', function(Menu) {
             self._definir_titulo();
         });
     }
+
+    this.guardar_dibujo = function(ruta_carpeta_imagenes) {
+        var dibujo = $('#dibujo');
+        var dibujoImagen = dibujo.get(0).toDataURL();
+        var image = this._decodeBase64Image(dibujoImagen);
+
+        var nombre_imagen = 'dibujo.png';
+        var ruta_imagen = path.join(ruta_carpeta_imagenes, nombre_imagen);
+
+        var self = this;
+
+        fs.writeFile(ruta_imagen, image.data, function(err) {
+            if (err)
+                throw err;
+        });
+        self.contenido_hmotion.dibujo = ruta_imagen;
+        this.cambios_sin_guardar = true;
+        Menu.habilitar_guardado();
+    };
 
     this.guardar = function(ruta_destino) {
         var nombre_carpeta_imagenes = path.basename(ruta_destino, '.hmotion') + ".imagenes";          /*   ejemplo:  prueba.imagenes    */
@@ -103,6 +129,7 @@ app.service('Proyecto', function(Menu) {
         var rutas_a_imagenes_origen = this.obtener_imagenes_desde_sly();
         this.mover_imagenes(rutas_a_imagenes_origen, ruta_carpeta_imagenes);
 
+        this.guardar_dibujo(ruta_carpeta_imagenes)
         this._crear_archivo(ruta_destino, this.contenido_hmotion);
 
         this.directorio_destino = path.dirname(ruta_destino);

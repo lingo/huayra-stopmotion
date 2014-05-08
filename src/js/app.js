@@ -547,7 +547,7 @@ app.controller('AppCtrl', function ($scope, $modal, Video, Paneles, Preferencias
         return image;
     }
 
-    function dibujar_imagen_sobre_canvas(image, canvas) {
+    $scope.dibujar_imagen_sobre_canvas = function(image, canvas) {
         var contexto = canvas.getContext('2d');
 
         var escala = 640 / image.videoWidth;
@@ -584,17 +584,17 @@ app.controller('AppCtrl', function ($scope, $modal, Video, Paneles, Preferencias
 
         if ($scope.camara_seleccionada == 1) {
             if ($scope.modo === 'html5') {
-                dibujar_imagen_sobre_canvas(video, canvas);
-                dibujar_imagen_sobre_canvas(video, previsualizado);
+                $scope.dibujar_imagen_sobre_canvas(video, canvas);
+                $scope.dibujar_imagen_sobre_canvas(video, previsualizado);
             } else {
                 var imagen_uvc = document.getElementById('imagen_uvc');
-                dibujar_imagen_sobre_canvas(imagen_uvc, canvas);
-                dibujar_imagen_sobre_canvas(imagen_uvc, previsualizado);
+                $scope.dibujar_imagen_sobre_canvas(imagen_uvc, canvas);
+                $scope.dibujar_imagen_sobre_canvas(imagen_uvc, previsualizado);
             }
         } else {
             var imagen_remota = document.getElementById('imagen_remota');
-            dibujar_imagen_sobre_canvas(imagen_remota, canvas);
-            dibujar_imagen_sobre_canvas(imagen_remota, previsualizado);
+            $scope.dibujar_imagen_sobre_canvas(imagen_remota, canvas);
+            $scope.dibujar_imagen_sobre_canvas(imagen_remota, previsualizado);
         }
 
         var imagen = convertCanvasToImage(canvas);
@@ -739,8 +739,8 @@ app.controller('AppCtrl', function ($scope, $modal, Video, Paneles, Preferencias
         var item = Proyecto.sly.getPos(indice);
         var imagen = item.el.children[0];
 
-        dibujar_imagen_sobre_canvas(imagen, canvas);
-        dibujar_imagen_sobre_canvas(imagen, previsualizado);
+        $scope.dibujar_imagen_sobre_canvas(imagen, canvas);
+        $scope.dibujar_imagen_sobre_canvas(imagen, previsualizado);
     })
 
 
@@ -748,6 +748,10 @@ app.controller('AppCtrl', function ($scope, $modal, Video, Paneles, Preferencias
    * Atajos de teclado.
    *
    */
+  key('f12', function(){
+    mostrar_herramientas_de_desarrollo();
+  });
+
   key('n', function(){
       $scope.panel_visible = !$scope.panel_visible;
       $scope.$apply();
