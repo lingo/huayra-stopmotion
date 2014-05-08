@@ -4,6 +4,7 @@
   "description": "stopmotion",
   "main": "index.js",
   "scripts": {
+    "start": "nodewebkit src",
     "test": "nodewebkit src"
   },
   "repository": {
@@ -14,6 +15,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "grunt": "~0.4.1",
+    "grunt-cli": "latest",
     "grunt-node-webkit-builder": "~0.1.14",
     "express": "~3.4.4",
     "socket.io": "~0.9.16",
