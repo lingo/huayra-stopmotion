@@ -137,23 +137,44 @@ app.service('Proyecto', function(Menu) {
         var self = this;
         this.contenido_hmotion.cuadros = [];
 
-        lista_a_imagenes.map(function(ruta_imagen, index) {
+        lista_a_imagenes.every(function(ruta_imagen, index) {
             var nombre_imagen = "imagen_" + index + ".png";
             var ruta_imagen_destino = path.join(ruta_carpeta_destino, nombre_imagen);
 
             try {
                 if (ruta_imagen != ruta_imagen_destino) {
                     fs.renameSync(ruta_imagen, ruta_imagen_destino);
+					self.contenido_hmotion.cuadros.push({
+						ruta: path.join(path.basename(ruta_carpeta_destino), nombre_imagen)
+					});
                     //fs.createReadStream(ruta_imagen).pipe(fs.createWriteStream(ruta_imagen_destino));
                 }
             } catch(err) {
-                console.log(err);
-            }
+				if (err.code === 'EXDEV') {
+					// Fall back to copy&delete because of problems with cross-device rename
+					// This typically occurs with tmpfs mounted to a different device.
+					try {
+						var is = fs.createReadStream(ruta_imagen);
+						var os = fs.createWriteStream(ruta_imagen_destino);
 
-            self.contenido_hmotion.cuadros.push({
-                ruta: path.join(path.basename(ruta_carpeta_destino), nombre_imagen)
-            });
-        })
+						is.pipe(os);
+						is.on('end',function() {
+							fs.unlinkSync(ruta_imagen);
+							self.contenido_hmotion.cuadros.push({
+								ruta: path.join(path.basename(ruta_carpeta_destino), nombre_imagen)
+							});
+						});					
+					} catch(err) {
+						alert("Se ha producido un fallo en guardar la imagen" + err);
+                        return false;
+					}
+				} else {
+                    alert("Se ha producido un fallo en guardar la imagen" + err);
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 
     this.obtener_imagenes_desde_sly = function() {
