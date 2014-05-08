@@ -169,7 +169,11 @@ app.service('Proyecto', function(Menu) {
         var data = JSON.stringify(contenido_json, null, 4);
         var onerror = function(e) {console.log(e)};
 
-        fs.writeFile(ruta_destino, data, onerror);
+        fs.writeFile(ruta_destino, data, function(e) {
+            if (e !== null) {
+                alert("Ha ocurrido un error " + e + "\r\nPor favor, vuelva a intentar");
+            }
+        });
     }
 
 
