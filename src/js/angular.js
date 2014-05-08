@@ -13555,6 +13555,8 @@ var inputType = {
       </doc:example>
    */
   'number': numberInputType,
+  'range': rangeInputType,
+
 
 
   /**
@@ -13922,6 +13924,32 @@ function textInputType(scope, element, attr, ctrl, $sniffer, $browser) {
 
     ctrl.$parsers.push(maxLengthValidator);
     ctrl.$formatters.push(maxLengthValidator);
+  }
+}
+
+function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
+  numberInputType(scope, element, attr, ctrl, $sniffer, $browser);
+
+  // if the browser does support "input" event, we are fine - except on IE9 which doesn't fire the
+  // input event on backspace, delete or cut
+  if ($sniffer.hasEvent('input')) {
+    var listener = function() {
+      var value = element.val();
+
+      // By default we will trim the value
+      // If the attribute ng-trim exists we will avoid trimming
+      // e.g. <input ng-model="foo" ng-trim="false">
+      if (toBoolean(attr.ngTrim || 'T')) {
+        value = trim(value);
+      }
+
+      if (ctrl.$viewValue !== value) {
+        scope.$apply(function() {
+          ctrl.$setViewValue(value);
+        });
+      }
+    };
+    element.on('change', listener);
   }
 }
 
