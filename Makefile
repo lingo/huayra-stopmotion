@@ -1,3 +1,5 @@
+GRUNT="${PWD}/node_modules/grunt-cli/bin/grunt"
+
 all:
 	@echo "init           Instala todas las dependencias necesarias."
 	@echo "test           Prueba la aplicación usando nodewebkit."
@@ -15,7 +17,7 @@ init:
 
 build:
 	rm -f -r webkitbuilds/releases/
-	grunt nodewebkit
+	"${GRUNT}" nodewebkit
 
 # puede eliminarse y usar make test, ya que instala automágicamente node webkit.
 test_mac:
